@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Click me</title>
+
+    <style>
+      body {
+        background: #161616;
+        font-family: Verdana, Geneva, sans-serif;
+      }
+
+      #btn {
+        width: 100px;
+        height: 50;
+        text-align: center;
+        color: white;
+        white-space: nowrap;
+        padding: 10px;
+        background: #3f3f3f;
+        border: 1px solid #545454;
+        border-radius: 6px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin: -10px 0 0 -10px;
+        /* pointer-events: none; */
+      }
+    </style>
+  </head>
+  <body onload="followMouse();">
+    <div id="btn" onclick="startFollow()">CLICK ME</div>
+
+    <script type="text/javascript">
+      var $ = document.querySelector.bind(document);
+      var $on = document.addEventListener.bind(document);
+      var btn = $("#btn");
+
+      // const
+      var x_offset = -50;
+      var y_offset = -10;
+      var max_push = 100;
+      var acceleration = 0.125;
+
+      // dynamic positions
+      var xmouse, ymouse;
+      var x, y;
+      var dx_push = 0;
+      var dy_push = 0;
+      var follow = false;
+
+      $on("mousemove", function (e) {
+        xmouse = e.clientX || e.pageX;
+        ymouse = e.clientY || e.pageY;
+      });
+
+      $on("mousedown", function (e) {
+        var angle = 2 * Math.PI * Math.random();
+        dx_push = max_push * Math.cos(angle);
+        dy_push = max_push * Math.sin(angle);
+      });
+
+      function startFollow() {
+        follow = true;
+      }
+
+      function followMouse() {
+        if (follow) {
+          if (!x) x = xmouse;
+          if (!y) y = ymouse;
+          dx_push = dx_push * 0.9;
+          dy_push = dy_push * 0.9;
+          var dx = (xmouse - x) * acceleration + dx_push;
+          var dy = (ymouse - y) * acceleration + dy_push;
+          if (Math.abs(dx) + Math.abs(dy) > 0.1) {
+            x += dx;
+            y += dy;
+            btn.style.left = x + x_offset + "px";
+            btn.style.top = y + y_offset + "px";
+          }
+        }
+
+        requestAnimationFrame(followMouse);
+      }
+      requestAnimationFrame(followMouse);
+    </script>
+  </body>
+</html>
